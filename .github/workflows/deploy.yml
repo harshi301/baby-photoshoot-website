@@ -16,16 +16,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: "22"
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
-      - name: Install dependencies
-        run: npm install
+      - name: Build Docker image
+        run: docker build -t baby-photoshoot-app:latest .
 
-      - name: Build the project
-        run: npm run build
+      - name: Extract built files
+        run: |
+          docker create --name app-container baby-photoshoot-app:latest
+          docker cp app-container:/app/.next ./.next
+          docker rm app-container
 
   deploy:
     if: github.ref == 'refs/heads/main'
@@ -39,13 +40,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "22"
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build the project
-        run: npm run build
+          node-version: "16"
 
       - name: Install Netlify CLI
         run: npm install -g netlify-cli
