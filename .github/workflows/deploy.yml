@@ -23,19 +23,19 @@ jobs:
         run: docker build -t baby-photoshoot-app:latest .
 
       - name: Create output directory
-        run: mkdir -p ./app
+        run: mkdir -p output
 
       - name: Extract built files
         run: |
           docker create --name app-container baby-photoshoot-app:latest
-          docker cp app-container:/app/.next ./app/.next
+          docker cp app-container:/app/.next ./output/.next
           docker rm app-container
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v2
         with:
           name: next-build
-          path: ./app/.next
+          path: ./output/.next
 
   deploy:
     if: github.ref == 'refs/heads/main'
@@ -51,6 +51,9 @@ jobs:
         with:
           name: next-build
 
+      - name: Move build files
+        run: mkdir -p .next && mv output/.next/* .next/
+
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
@@ -63,4 +66,4 @@ jobs:
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        run: netlify deploy --prod --dir=app/.next
+        run: netlify deploy --prod --dir=.next
