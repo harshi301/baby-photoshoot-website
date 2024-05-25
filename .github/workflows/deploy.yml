@@ -55,10 +55,19 @@ jobs:
           name: next-build
           path: ./output
 
-      - name: Move build files
+      - name: Move Including Hidden Files
         run: |
           mkdir -p .next
-          mv ./output/.next/* .next/
+          shopt -s nullglob dotglob
+          files=(./output/.next/* ./output/.next/.*)
+          if [ ${#files[@]} -gt 0 ]; then
+            mv ./output/.next/* ./output/.next/.* .next/
+            echo "Files moved successfully."
+          else
+            echo "No files to move."
+          fi
+          shopt -u nullglob dotglob
+          ls -la .next
 
       - name: List .next directory contents
         run: ls -la .next
