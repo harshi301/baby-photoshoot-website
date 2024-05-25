@@ -28,7 +28,7 @@ jobs:
       - name: Extract built files
         run: |
           docker create --name app-container baby-photoshoot-app:latest
-          docker cp app-container:/app/.next ./output
+          docker cp app-container:/app/.next ./output/.next
           docker rm app-container
 
       - name: List output directory contents
@@ -54,11 +54,13 @@ jobs:
         with:
           name: next-build
 
-      - name: List downloaded artifacts
-        run: ls -la ./output/.next
-
       - name: Move build files
-        run: mkdir -p .next && mv ./output/.next/* .next/
+        run: |
+          mkdir -p .next
+          mv ./output/.next/* .next/
+
+      - name: List .next directory contents
+        run: ls -la .next
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
