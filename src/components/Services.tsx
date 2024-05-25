@@ -9,8 +9,8 @@ export default function Services() {
               Newborn Sessions
             </h3>
             <p className="text-charcoal">
-              Capture the first moments of your newborn's life with our
-              specialized sessions.
+              Preserve the early memories of your newborn with our specialized
+              photography sessions..
             </p>
           </div>
           <div className="p-6 bg-lavender-light rounded-lg shadow-md">
