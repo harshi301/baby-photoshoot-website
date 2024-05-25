@@ -1,5 +1,16 @@
 {
-  "extends": ["next/core-web-vitals", "next", "prettier", "eslint:recommended"],
+  "extends": [
+    "next/core-web-vitals",
+    "next",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "plugins": [],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
   "rules": {
     "react/no-unescaped-entities": "off",
     "quotes": ["warn", "double"],
@@ -8,6 +19,8 @@
     "no-console": ["warn"],
     "no-duplicate-imports": ["warn"],
     "no-shadow": ["warn"],
-    "quote-props": ["warn", "as-needed"]
+    "quote-props": ["warn", "as-needed"],
+    "@typescript-eslint/no-unused-vars": ["warn"],
+    "@typescript-eslint/no-explicit-any": "off"
   }
 }
