@@ -25,7 +25,7 @@ jobs:
       - name: Extract built files
         run: |
           docker create --name app-container baby-photoshoot-app:latest
-          docker cp app-container:/app/.next ./.next
+          docker cp app-container:/app/.next ./app/.next
           docker rm app-container
 
   deploy:
