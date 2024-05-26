@@ -1,15 +1,12 @@
-name: CI/CD Pipeline
+name: Deploy to DigitalOcean
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,62 +19,24 @@ jobs:
       - name: Build Docker image
         run: docker build -t baby-photoshoot-app:latest .
 
-      - name: Create output directory
-        run: mkdir -p output
+      - name: Save Docker image to a tar file
+        run: docker save baby-photoshoot-app:latest -o baby-photoshoot-app.tar
 
-      - name: Extract built files
-        run: |
-          docker create --name app-container baby-photoshoot-app:latest
-          docker cp app-container:/app/.next ./output/.next
-          docker rm app-container
-
-      - name: List output directory contents
-        run: ls -la ./output/.next
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v2
+      - name: Copy Docker image to DigitalOcean
+        uses: appleboy/scp-action@v0.1.0
         with:
-          name: next-build
-          path: ./output/.next
+          host: ${{ secrets.DROPLET_IP }}
+          username: ${{ secrets.DROPLET_USERNAME }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          source: "baby-photoshoot-app.tar"
+          target: "~/baby-photoshoot-app.tar"
 
-  deploy:
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v2
+      - name: SSH and load Docker image on DigitalOcean
+        uses: appleboy/ssh-action@v0.1.3
         with:
-          name: next-build
-          path: ./output/.next
-
-      # - name: List contents of output directory
-      #   run: |
-      #     ls -la ./output
-      #     ls -la ./output/.next
-
-      - name: Move build Files
-        run: |
-          mkdir -p .next
-          mv ./output/.next/* .next/
-
-      # - name: List .next directory contents
-      #   run: ls -la .next
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: "22"
-
-      - name: Install Netlify CLI
-        run: npm install -g netlify-cli
-
-      - name: Deploy to Netlify
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        run: netlify deploy --prod --dir=.next
+          host: ${{ secrets.DROPLET_IP }}
+          username: ${{ secrets.DROPLET_USERNAME }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          script: |
+            docker load -i ~/baby-photoshoot-app.tar
+            docker run -d -p 80:3000 baby-photoshoot-app:latest
