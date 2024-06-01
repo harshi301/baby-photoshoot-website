@@ -37,6 +37,7 @@ jobs:
         with:
           host: ${{ secrets.DROPLET_IP }} # IP address or hostname of your DigitalOcean server
           username: ${{ secrets.DROPLET_USERNAME }} # Username to use for the server
+          key: ${{ secrets.DROPLET_SSH_KEY }}
           source: "baby-photoshoot-app.tar" # Source file to copy
           target: "~/baby-photoshoot-app.tar" # Target location on the server
           debug: true # Enable debug output
