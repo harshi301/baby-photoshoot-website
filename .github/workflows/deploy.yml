@@ -36,7 +36,8 @@ jobs:
       - name: Deploy Application
         run: |
           ssh -i $HOME/.ssh/id_rsa ${{ secrets.DROPLET_USERNAME }}@${{ secrets.DROPLET_IP }} "\
-          docker stop baby-photoshoot-app || true; \
-          docker rm baby-photoshoot-app || true; \
+          docker ps -q --filter 'publish=80' | xargs -r docker stop | xargs -r docker rm; \
+          docker stop baby-photoshoot-app 2>/dev/null || true; \
+          docker rm baby-photoshoot-app 2>/dev/null || true; \
           docker load -i /home/${{ secrets.DROPLET_USERNAME }}/baby-photoshoot-app.tar && \
           docker run -d -p 80:3000 --name baby-photoshoot-app baby-photoshoot-app:latest"
