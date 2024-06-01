@@ -33,6 +33,10 @@ jobs:
         run: |
           rsync -avz -e "ssh -i $HOME/.ssh/id_rsa" baby-photoshoot-app.tar ${{ secrets.DROPLET_USERNAME }}@${{ secrets.DROPLET_IP }}:/home/${{ secrets.DROPLET_USERNAME }}/
 
-      - name: Load and Run Docker Image
+      - name: Deploy Application
         run: |
-          ssh -i $HOME/.ssh/id_rsa ${{ secrets.DROPLET_USERNAME }}@${{ secrets.DROPLET_IP }} "docker load -i /home/${{ secrets.DROPLET_USERNAME }}/baby-photoshoot-app.tar && docker run -d -p 80:3000 baby-photoshoot-app:latest"
+          ssh -i $HOME/.ssh/id_rsa ${{ secrets.DROPLET_USERNAME }}@${{ secrets.DROPLET_IP }} "\
+          docker stop baby-photoshoot-app || true; \
+          docker rm baby-photoshoot-app || true; \
+          docker load -i /home/${{ secrets.DROPLET_USERNAME }}/baby-photoshoot-app.tar && \
+          docker run -d -p 80:3000 --name baby-photoshoot-app baby-photoshoot-app:latest"
