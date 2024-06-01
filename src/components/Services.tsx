@@ -10,7 +10,7 @@ export default function Services() {
             </h3>
             <p className="text-charcoal">
               Preserve the early memories of your newborn with our specialized
-              photography sessions..
+              photography sessions.
             </p>
           </div>
           <div className="p-6 bg-lavender-light rounded-lg shadow-md">
