@@ -22,8 +22,9 @@ jobs:
       - name: Save Docker image to a tar file
         run: docker save baby-photoshoot-app:latest -o baby-photoshoot-app.tar
 
-      - name: Decode SSH Key
+      - name: Setup SSH Key
         run: |
+          mkdir -p $HOME/.ssh
           echo "${{ secrets.DROPLET_SSH_KEY }}" | tr -d '\\n' > $HOME/.ssh/key
           chmod 600 $HOME/.ssh/key
         shell: bash
