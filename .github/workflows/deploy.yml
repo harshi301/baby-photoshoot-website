@@ -22,19 +22,16 @@ jobs:
       - name: Save Docker image to a tar file
         run: docker save baby-photoshoot-app:latest -o baby-photoshoot-app.tar
 
-      - name: Setup SSH Key
-        run: |
-          mkdir -p $HOME/.ssh
-          echo -e "${{ secrets.DROPLET_SSH_KEY }}" > $HOME/.ssh/key
-          chmod 600 $HOME/.ssh/key
-        shell: bash
+      - name: Setup SSH Agent
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.DROPLET_SSH_KEY }}
 
       - name: Copy Docker image to DigitalOcean
         uses: appleboy/scp-action@v0.1.0
         with:
           host: ${{ secrets.DROPLET_IP }}
           username: ${{ secrets.DROPLET_USERNAME }}
-          key: ${{ secrets.DROPLET_SSH_KEY }}
           source: "baby-photoshoot-app.tar"
           target: "~/baby-photoshoot-app.tar"
           debug: true
@@ -44,7 +41,6 @@ jobs:
         with:
           host: ${{ secrets.DROPLET_IP }}
           username: ${{ secrets.DROPLET_USERNAME }}
-          key: ${{ secrets.DROPLET_SSH_KEY }}
           script: |
             docker load -i ~/baby-photoshoot-app.tar
             docker run -d -p 80:3000 baby-photoshoot-app:latest
