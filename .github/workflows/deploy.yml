@@ -25,7 +25,7 @@ jobs:
       - name: Setup SSH Key
         run: |
           mkdir -p $HOME/.ssh
-          echo "${{ secrets.DROPLET_SSH_KEY }}" | tr -d '\\n' > $HOME/.ssh/key
+          echo -e "${{ secrets.DROPLET_SSH_KEY }}" > $HOME/.ssh/key
           chmod 600 $HOME/.ssh/key
         shell: bash
 
