@@ -30,6 +30,7 @@ jobs:
           key: ${{ secrets.DROPLET_SSH_KEY }}
           source: "baby-photoshoot-app.tar"
           target: "~/baby-photoshoot-app.tar"
+          debug: true
 
       - name: SSH and load Docker image on DigitalOcean
         uses: appleboy/ssh-action@v0.1.3
