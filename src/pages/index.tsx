@@ -5,6 +5,8 @@ import Hero from "../components/Hero";
 import Services from "../components/Services";
 import Testimonials from "../components/Testimonials";
 import Footer from "../components/Footer";
+import Introduction from "@/components/Introduction";
+import FeaturedServices from "@/components/FeaturedServices";
 
 export default function Home() {
   return (
@@ -22,9 +24,12 @@ export default function Home() {
         <link rel="canonical" href="https://www.example.com/" />
       </Head>
       <Header />
-      <Hero />
-      <Services />
-      <Testimonials />
+      <main>
+        <Hero />
+        <Introduction />
+        <FeaturedServices />
+        <Testimonials />
+      </main>
       <Footer />
     </div>
   );
